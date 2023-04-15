@@ -11,19 +11,31 @@ import java.io.Writer;
 @AllArgsConstructor
 public class MySin {
     @Getter
-    private double tolerance;
+    private double precision;
 
     public double calculate(double arg) {
         if (Double.isNaN(arg)) return arg;
         if (Double.isInfinite(arg)) return Double.NaN;
+        if (arg > 0) {
+            while (arg > Math.PI) {
+                arg -= 2 * Math.PI;
+            }
+        } else if (arg < 0) {
+            while (arg < -Math.PI) {
+                arg += 2 * Math.PI;
+            }
+        }
         int factorial = 1;
         double cur = arg;
-        int iter = 1;
+        int iter = 0;
         double res = 0;
-        while (Math.abs(cur) > tolerance) {
-            factorial = factorial * (2 * iter - 1);
+        while (Math.abs(cur) > precision) {
+            factorial = factorial * (2 * iter + 1);
+            System.out.println(Math.pow(arg, (2 * iter + 1)));
             int sign = iter % 2 == 0 ? -1 : 1;
-            res += Math.pow(arg, (2 * iter - 1)) * sign / factorial;
+            cur = Math.pow(arg, (2 * iter + 1)) * sign / factorial;
+            System.out.println(cur);
+            res += cur;
             ++iter;
         }
         return res;

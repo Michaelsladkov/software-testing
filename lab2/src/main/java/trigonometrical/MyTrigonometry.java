@@ -17,8 +17,8 @@ public class MyTrigonometry {
         sin = new MySin(tolerance);
     }
 
-    public double getTolerance() {
-        return sin.getTolerance();
+    public double getPrecision() {
+        return sin.getPrecision();
     }
 
     public double sin(double x) {

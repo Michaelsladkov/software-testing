@@ -26,8 +26,8 @@ public class MyLog {
         return ln(arg) / ln(base);
     }
 
-    public double getTolerance() {
-        return ln.getTolerance();
+    public double getPrecision() {
+        return ln.getPrecision();
     }
 
     public void writeCSV(double x, PrintWriter out) {
