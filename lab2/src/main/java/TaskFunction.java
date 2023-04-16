@@ -27,10 +27,8 @@ public class TaskFunction {
     }
 
     public double calculate(double x) {
-        if (x > 0) {
-            return ((tr.tan(x) - tr.cos(x) * tr.sec(x)) / tr.cot(x)) +
-                    (tr.sec(x) / tr.tan(x)) +
-                    ((tr.sec(x) + tr.cos(x)) * (((tr.tan(x)) / tr.cot(x) * tr.sin(x))) / tr.tan(x));
+        if (x <= 0) {
+            return (tr.tan(x)-tr.cos(x))*tr.sec(x)/tr.cot(x)+tr.sec(x)/tr.tan(x)+((tr.sec(x)+tr.cos(x))*((tr.tan(x)/(tr.cos(x)*tr.sin(x)))/tr.tan(x)));
         }
         return (((log.log(x, 10) * log.log(x, 2) - log.log(x, 2)) - log.log(x * x, 10)) / log.log(x, 2)) * log.log(x, 10);
     }

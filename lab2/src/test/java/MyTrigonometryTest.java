@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class MyTrigonometryTest {
     private static final double FLOATING_POINT_TOLERANCE = 1E-2;
-    private final MyTrigonometry trigonometryModule = new MyTrigonometry(FLOATING_POINT_TOLERANCE / 2);
+    private final MyTrigonometry trigonometryModule = new MyTrigonometry(FLOATING_POINT_TOLERANCE / 10);
 
     private static final double[] sinArgs = {-4 * Math.PI, -Math.PI / 2, - Math.PI / 3, Math.PI / 6, Math.PI / 4, 2 * Math.PI / 3, 10 * Math.PI, 0, 1, -1};
     private static Stream<Arguments> sinArgsStream() {
