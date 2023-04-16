@@ -14,7 +14,7 @@ public class MyTrigonometry {
     }
 
     public MyTrigonometry(double tolerance) {
-        sin = new MySin(tolerance);
+        sin = new MySin(tolerance / 100);
     }
 
     public double getPrecision() {
@@ -31,11 +31,14 @@ public class MyTrigonometry {
 
     public double tan(double arg) {
         double x = arg - Math.PI * Math.floor((arg + Math.PI / 2) / Math.PI);
-        return (x > 0) ? -sin(-x) / cos(-x) : sin(x) / cos(x);
+        if (Math.abs(x - Math.PI) < getPrecision()) {
+            return 0;
+        }
+        return sin(x) / cos(x);
     }
 
     public double sec(double x) {
-        return 1 / cos(-Math.abs(x));
+        return 1 / cos(x);
     }
 
     public double cot(double x) {
