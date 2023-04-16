@@ -7,13 +7,13 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyLn {
     @Getter
-    private double precision = 10e-7;
+    private double precision = 0.01;
 
     public double calculate(double arg) {
         if (Double.isNaN(arg)) return  Double.NaN;
@@ -33,7 +33,7 @@ public class MyLn {
         return arg > 1 ? -result : result;
     }
 
-    public void writeCSV(double x, Writer out) {
+    public void writeCSV(double x, PrintWriter out) {
         double res = calculate(x);
         try {
             CSVPrinter printer = CSVFormat.DEFAULT.print(out);

@@ -13,6 +13,8 @@ public class TaskFunctionTest {
         return Stream.of(
                 Arguments.of(-42, -1.8333155),
                 Arguments.of(-9*Math.PI, Double.NaN),
+                Arguments.of(-Math.PI - 0.01, 300.02490),
+                Arguments.of(-Math.PI + 0.01, -300.02510),
                 Arguments.of(-2*Math.PI/3, -14.660254),
                 Arguments.of(-Math.PI/3, 0.8038476),
                 Arguments.of(-Math.PI/4, -3.2426407),

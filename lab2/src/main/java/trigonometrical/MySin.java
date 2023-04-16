@@ -2,16 +2,18 @@ package trigonometrical;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class MySin {
     @Getter
-    private double precision;
+    private double precision = 0.01;
 
     public double calculate(double arg) {
         if (Double.isNaN(arg)) return arg;
@@ -37,7 +39,7 @@ public class MySin {
         return res;
     }
 
-    public void writeCSV(double x, Writer out) {
+    public void writeCSV(double x, PrintWriter out) {
         double res = calculate(x);
         try {
             CSVPrinter printer = CSVFormat.DEFAULT.print(out);

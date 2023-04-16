@@ -9,6 +9,10 @@ import java.io.PrintWriter;
 public class MyTrigonometry {
     private final MySin sin;
 
+    public MyTrigonometry() {
+        sin = new MySin();
+    }
+
     public MyTrigonometry(MySin sin) {
         this.sin = sin;
     }

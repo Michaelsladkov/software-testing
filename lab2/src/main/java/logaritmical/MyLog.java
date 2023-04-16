@@ -16,7 +16,11 @@ public class MyLog {
         ln = new MyLn(tolerance);
     }
 
-    private MyLn ln;
+    public MyLog() {
+        ln = new MyLn(0.01);
+    }
+
+    private final MyLn ln;
 
     public double ln(double x) {
         return ln.calculate(x);
