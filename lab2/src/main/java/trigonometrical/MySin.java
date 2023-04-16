@@ -25,17 +25,13 @@ public class MySin {
                 arg += 2 * Math.PI;
             }
         }
-        int factorial = 1;
-        double cur = arg;
-        int iter = 0;
+        double cur = 1;
+        int iter = 1;
         double res = 0;
-        while (Math.abs(cur) > precision) {
-            factorial = factorial * (2 * iter + 1);
-            System.out.println(Math.pow(arg, (2 * iter + 1)));
-            int sign = iter % 2 == 0 ? -1 : 1;
-            cur = Math.pow(arg, (2 * iter + 1)) * sign / factorial;
-            System.out.println(cur);
-            res += cur;
+        while (Math.abs(cur) > precision && iter < 100) {
+            cur *= arg / iter;
+            if (iter % 4 == 1) res += cur;
+            if (iter % 4 == 3) res -= cur;
             ++iter;
         }
         return res;

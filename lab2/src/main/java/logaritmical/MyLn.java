@@ -19,6 +19,7 @@ public class MyLn {
         if (Double.isNaN(arg)) return  Double.NaN;
         if (arg < 0) return Double.NaN;
         if (arg == 0) return Double.NEGATIVE_INFINITY;
+        if (Double.isInfinite(arg)) return arg;
         double x = arg > 1 ? (1 / arg - 1) : arg - 1;
         double result = x;
         double cur = -x*x;

@@ -4,8 +4,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class MyLnTest {
-    private static final double FLOATING_POINT_TOLERANCE = 10E-2;
-    private static final double STEP = 10E-1;
+    private static final double FLOATING_POINT_TOLERANCE = 1E-2;
+    private static final double STEP = 1E-1;
     MyLn lnModule = new MyLn(FLOATING_POINT_TOLERANCE / 2);
 
     @ParameterizedTest
@@ -16,7 +16,7 @@ public class MyLnTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {1.5, 1.01, 1.0, 0.99, 0.01})
+    @ValueSource(doubles = {1.5, 1.05, 1.0, 0.95, 0.15})
     public void monotonousTest(double param) {
         double val1 = lnModule.calculate(param - STEP);
         double val2 = lnModule.calculate(param);
