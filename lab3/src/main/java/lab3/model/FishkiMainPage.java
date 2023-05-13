@@ -53,12 +53,21 @@ public class FishkiMainPage {
     public String getPostTitle(int postIndex) {
         return posts.get(postIndex).
                 findElement(By.xpath("//div[@class='content__text']//span[@itemprop='name']")).
-                getAttribute("innerHTML").trim().replace("&nbsp", " ");
+                getAttribute("innerHTML").trim().replace("&nbsp;", " ");
     }
 
     public void performSearch(String query) {
         showSearchButton.click();
         searchInput.sendKeys(query);
         searchButton.click();
+    }
+
+    public void login() {
+
+    }
+
+    public void goToEditor() {
+        WebElement toEditorLink = driver.findElement(By.xpath("//li[@class='header_add-new-post']/a"));
+        toEditorLink.click();
     }
 }

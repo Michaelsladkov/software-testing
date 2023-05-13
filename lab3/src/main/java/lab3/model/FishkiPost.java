@@ -26,6 +26,6 @@ public class FishkiPost {
     }
 
     public String getTitle() {
-        return titleElement.getAttribute("innerHTML").trim().replace("&nbsp", " ");
+        return titleElement.getAttribute("innerHTML").trim().replace("&nbsp;", " ");
     }
 }

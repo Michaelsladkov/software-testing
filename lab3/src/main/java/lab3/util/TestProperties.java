@@ -10,7 +10,7 @@ public class TestProperties {
 
     static {
         try {
-            fileIS = new FileInputStream("./lab3/src/main/resources/lab3.properties");
+            fileIS = new FileInputStream("src/main/resources/lab3.properties");
             properties = new Properties();
             properties.load(fileIS);
 
