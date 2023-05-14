@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -167,6 +168,88 @@ public class FishkiTests {
         mainPage.goToProfile();
         profile = new FishkiProfile(d);
         Assertions.assertEquals(0, profile.getLikesNumber());
+    }
+
+    @ParameterizedTest
+    @MethodSource("driverStream")
+    @Order(6)
+    public void comment(WebDriver d) throws InterruptedException {
+        FishkiMainPage mainPage = new FishkiMainPage(d);
+        String postId = mainPage.getPostId(3);
+        mainPage.goToPost(3);
+        FishkiPost post = new FishkiPost(d);
+        post.postComment(TestProperties.getProp("sampleCommentText"));
+        Thread.sleep(1000);
+        mainPage = new FishkiMainPage(d);
+        mainPage.goToProfile();
+        FishkiProfile profile = new FishkiProfile(d);
+        Assertions.assertEquals(1, profile.getCommentsNumber());
+        profile.goToCommented();
+        Thread.sleep(2000);
+        String commentText = d.findElement(By.xpath(
+                "//div[contains(@class, 'comment__text')]")).getAttribute("innerHTML").trim();
+        Assertions.assertEquals(TestProperties.getProp("sampleCommentText"), commentText);
+        WebElement postLink = d.findElement(By.xpath("//dev[@class='chat-user__links']//a"));
+        postLink.click();
+        post = new FishkiPost(d);
+        Assertions.assertEquals(postId, post.getPostId());
+        mainPage = new FishkiMainPage(d);
+        mainPage.goToProfile();
+        profile = new FishkiProfile(d);
+        profile.goToCommented();
+        WebElement deleteButton = d.findElement(By.xpath("//a[@class='chat-user__delete']"));
+        deleteButton.click();
+        WebElement confirmDelete = d.findElement(By.xpath("//a[contains(@class, btn-comment-remove)]"));
+        confirmDelete.click();
+        mainPage = new FishkiMainPage(d);
+        mainPage.goToProfile();
+        profile = new FishkiProfile(d);
+        Assertions.assertEquals(0, profile.getCommentsNumber());
+    }
+
+    @ParameterizedTest
+    @MethodSource("driverStream")
+    @Order(7)
+    public void likeDislikeComment(WebDriver d) {
+        FishkiMainPage mainPage = new FishkiMainPage(d);
+        String postId = mainPage.getPostId(3);
+        mainPage.goToPost(3);
+        WebElement firstCommentLikeButton = d.findElement(By.xpath(
+                "((//div[@class='small-likes-wrap'])[1]/*[name()='svg'])[1]"
+        ));
+        WebElement firstCommentDislikeButton = d.findElement(By.xpath(
+                "((//div[@class='small-likes-wrap'])[1]/*[name()='svg'])[2]"
+        ));
+        WebElement firstCommentRating = d.findElement(By.xpath(
+                "(//div[@class='small-likes-wrap'])[1]//div[contains(@class, 'likes-count')]"
+        ));
+        Actions actions = new Actions(d);
+        String ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        int initialRating = Integer.parseInt(ratingStr);
+        actions.moveToElement(firstCommentDislikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
+        actions.moveToElement(firstCommentDislikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
+        actions.moveToElement(firstCommentDislikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating, Integer.parseInt(ratingStr));
+        actions.moveToElement(firstCommentDislikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating-1, Integer.parseInt(ratingStr));
+        actions.moveToElement(firstCommentDislikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating-1, Integer.parseInt(ratingStr));
+        actions.moveToElement(firstCommentLikeButton);
+        actions.click().perform();
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating, Integer.parseInt(ratingStr));
     }
 
     @AfterAll

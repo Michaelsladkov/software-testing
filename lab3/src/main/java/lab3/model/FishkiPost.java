@@ -17,6 +17,12 @@ public class FishkiPost {
     @FindBy(xpath = "(//div[@class='content__reactions']//div//button)[1]")
     private WebElement likeButton;
 
+    @FindBy(xpath = "//textarea[@name='comment']")
+    private WebElement commentArea;
+
+    @FindBy(xpath = "//div[@class='comments-form-button']//input[@type='submit']")
+    private WebElement commentButton;
+
     public FishkiPost(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
@@ -34,9 +40,14 @@ public class FishkiPost {
         likeButton.click();
     }
 
-    public void resetLike() {
-        Actions actions = new Actions(driver);
-        actions.moveToElement(likeButton).perform();
-        actions.doubleClick().perform();
+    public void resetLike() throws InterruptedException {
+        likeButton.click();
+        Thread.sleep(200);
+        likeButton.click();
+    }
+
+    public void postComment(String commentText) {
+        commentArea.sendKeys(commentText);
+        commentButton.click();
     }
 }
