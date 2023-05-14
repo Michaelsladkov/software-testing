@@ -18,13 +18,16 @@ public class DriverManager {
     private DriverManager(){
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
+        chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
+        chromeDriver.manage().timeouts().scriptTimeout(Duration.ofSeconds(10));
+        drivers.add(chromeDriver);
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
-        FirefoxDriver firefoxDriver = new FirefoxDriver();
-        firefoxDriver.manage().timeouts().implicitlyWait(Duration.ofMillis(1000));
-        drivers.add(chromeDriver);
+        FirefoxDriver firefoxDriver = new FirefoxDriver(firefoxOptions);
+        firefoxDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        firefoxDriver.manage().timeouts().scriptTimeout(Duration.ofSeconds(10));
+        firefoxDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20));
         drivers.add(firefoxDriver);
     }
 

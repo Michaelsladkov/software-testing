@@ -1,5 +1,6 @@
 package lab3.model;
 
+import lab3.util.TestProperties;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +11,6 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 
 public class FishkiMainPage {
-    private static final String PAGE_URL = "https://fishki.net";
     private final WebDriver driver;
 
     @Getter
@@ -32,7 +32,7 @@ public class FishkiMainPage {
 
     public FishkiMainPage(WebDriver driver) {
         this.driver = driver;
-        driver.get(PAGE_URL);
+        driver.get(TestProperties.getProp("fishkiURL"));
         PageFactory.initElements(driver, this);
     }
 
@@ -62,12 +62,13 @@ public class FishkiMainPage {
         searchButton.click();
     }
 
-    public void login() {
-
-    }
-
     public void goToEditor() {
         WebElement toEditorLink = driver.findElement(By.xpath("//li[@class='header_add-new-post']/a"));
         toEditorLink.click();
+    }
+
+    public void goToProfile() {
+        WebElement toProfile = driver.findElement(By.xpath("//li[@class='header-settings__item']/a"));
+        toProfile.click();
     }
 }
