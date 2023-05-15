@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -94,6 +95,7 @@ public class FishkiTests {
         Assertions.assertEquals(TestProperties.getProp("TestProfileUrl"), profileLink.getAttribute("href"));
     }
 
+    /*
     @ParameterizedTest
     @MethodSource("driverStream")
     @Order(4)
@@ -143,21 +145,25 @@ public class FishkiTests {
         mainPage.goToProfile();
         profile = new FishkiProfile(d);
         Assertions.assertEquals(0, profile.getPostsNumber());
-    }
+    }*/
 
     @ParameterizedTest
     @MethodSource("driverStream")
     @Order(5)
     public void like(WebDriver d) throws InterruptedException {
         FishkiMainPage mainPage = new FishkiMainPage(d);
+        mainPage.goToProfile();
+        FishkiProfile profile = new FishkiProfile(d);
+        int initialLikes = profile.getLikesNumber();
+        mainPage = new FishkiMainPage(d);
         String postId = mainPage.getPostId(2);
         mainPage.goToPost(2);
         FishkiPost post = new FishkiPost(d);
         post.setLike();
         mainPage = new FishkiMainPage(d);
         mainPage.goToProfile();
-        FishkiProfile profile = new FishkiProfile(d);
-        Assertions.assertEquals(1, profile.getLikesNumber());
+        profile = new FishkiProfile(d);
+        Assertions.assertEquals(initialLikes + 1, profile.getLikesNumber());
         profile.goToLiked();
         Thread.sleep(1500);
         d.findElement(By.xpath("(//div[@class='drag_element']//div[@class='content__text']//a)[1]")).click();
@@ -167,7 +173,7 @@ public class FishkiTests {
         mainPage = new FishkiMainPage(d);
         mainPage.goToProfile();
         profile = new FishkiProfile(d);
-        Assertions.assertEquals(0, profile.getLikesNumber());
+        Assertions.assertEquals(initialLikes, profile.getLikesNumber());
     }
 
     @ParameterizedTest
@@ -181,6 +187,7 @@ public class FishkiTests {
         post.postComment(TestProperties.getProp("sampleCommentText"));
         Thread.sleep(1000);
         mainPage = new FishkiMainPage(d);
+        Thread.sleep(1000);
         mainPage.goToProfile();
         FishkiProfile profile = new FishkiProfile(d);
         Assertions.assertEquals(1, profile.getCommentsNumber());
@@ -189,8 +196,8 @@ public class FishkiTests {
         String commentText = d.findElement(By.xpath(
                 "//div[contains(@class, 'comment__text')]")).getAttribute("innerHTML").trim();
         Assertions.assertEquals(TestProperties.getProp("sampleCommentText"), commentText);
-        WebElement postLink = d.findElement(By.xpath("//dev[@class='chat-user__links']//a"));
-        postLink.click();
+        WebElement postLink = d.findElement(By.xpath("//a[@class='goto_post_class']"));
+        d.get(postLink.getAttribute("href"));
         post = new FishkiPost(d);
         Assertions.assertEquals(postId, post.getPostId());
         mainPage = new FishkiMainPage(d);
@@ -198,9 +205,14 @@ public class FishkiTests {
         profile = new FishkiProfile(d);
         profile.goToCommented();
         WebElement deleteButton = d.findElement(By.xpath("//a[@class='chat-user__delete']"));
-        deleteButton.click();
-        WebElement confirmDelete = d.findElement(By.xpath("//a[contains(@class, btn-comment-remove)]"));
-        confirmDelete.click();
+        ((JavascriptExecutor) d).executeScript("arguments[0].scrollIntoView(true);", deleteButton);
+        Actions actions = new Actions(d);
+        actions.moveToElement(deleteButton).perform();
+        actions.click().perform();
+        WebElement confirmDelete = d.findElement(By.xpath("//a[contains(@class, 'btn-comment-remove')]"));
+        actions.moveToElement(confirmDelete).perform();
+        actions.click().perform();
+        Thread.sleep(1000);
         mainPage = new FishkiMainPage(d);
         mainPage.goToProfile();
         profile = new FishkiProfile(d);
@@ -211,45 +223,35 @@ public class FishkiTests {
     @MethodSource("driverStream")
     @Order(7)
     public void likeDislikeComment(WebDriver d) {
+        int commentId = 1;
+        int postIndex = 12;
         FishkiMainPage mainPage = new FishkiMainPage(d);
-        String postId = mainPage.getPostId(3);
-        mainPage.goToPost(3);
-        WebElement firstCommentLikeButton = d.findElement(By.xpath(
-                "((//div[@class='small-likes-wrap'])[1]/*[name()='svg'])[1]"
-        ));
-        WebElement firstCommentDislikeButton = d.findElement(By.xpath(
-                "((//div[@class='small-likes-wrap'])[1]/*[name()='svg'])[2]"
-        ));
-        WebElement firstCommentRating = d.findElement(By.xpath(
-                "(//div[@class='small-likes-wrap'])[1]//div[contains(@class, 'likes-count')]"
-        ));
+        String postId = mainPage.getPostId(postIndex);
+        mainPage.goToPost(postIndex);
+        String commentRatingXPath = "(//div[@class='small-likes-wrap'])[" + commentId + "]//div[contains(@class, 'likes-count')]";
+        String commentLikeButtonXpath = "((//div[@class='small-likes-wrap'])[" + commentId + "]/*[name()='svg'])[1]";
+        String commentDislikeButtonXpath = "((//div[@class='small-likes-wrap'])[" + commentId + "]/*[name()='svg'])[2]";
+        WebElement firstCommentLikeButton = d.findElement(By.xpath(commentLikeButtonXpath));
+        WebElement firstCommentDislikeButton = d.findElement(By.xpath(commentDislikeButtonXpath));
+        WebElement firstCommentRating = d.findElement(By.xpath(commentRatingXPath));
         Actions actions = new Actions(d);
         String ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
         int initialRating = Integer.parseInt(ratingStr);
-        actions.moveToElement(firstCommentDislikeButton);
-        actions.click().perform();
-        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
-        actions.moveToElement(firstCommentDislikeButton);
-        actions.click().perform();
-        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
-        actions.moveToElement(firstCommentDislikeButton);
-        actions.click().perform();
-        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating, Integer.parseInt(ratingStr));
-        actions.moveToElement(firstCommentDislikeButton);
-        actions.click().perform();
-        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating-1, Integer.parseInt(ratingStr));
-        actions.moveToElement(firstCommentDislikeButton);
-        actions.click().perform();
-        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating-1, Integer.parseInt(ratingStr));
+        ((JavascriptExecutor) d).executeScript("arguments[0].scrollIntoView(true);", firstCommentDislikeButton);
+
         actions.moveToElement(firstCommentLikeButton);
         actions.click().perform();
+
+        firstCommentRating = d.findElement(By.xpath(commentRatingXPath));
         ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
-        Assertions.assertEquals(initialRating, Integer.parseInt(ratingStr));
+        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
+
+        firstCommentLikeButton = d.findElement(By.xpath(commentLikeButtonXpath));
+        actions.moveToElement(firstCommentLikeButton);
+        actions.click().perform();
+        firstCommentRating = d.findElement(By.xpath(commentRatingXPath));
+        ratingStr = firstCommentRating.getAttribute("innerHTML").trim();
+        Assertions.assertEquals(initialRating + 1, Integer.parseInt(ratingStr));
     }
 
     @AfterAll

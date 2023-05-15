@@ -1,6 +1,7 @@
 package lab3.model;
 
 import lombok.Getter;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -41,9 +42,10 @@ public class FishkiPost {
     }
 
     public void resetLike() throws InterruptedException {
-        likeButton.click();
-        Thread.sleep(200);
-        likeButton.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", likeButton);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(likeButton).perform();
+        actions.doubleClick().perform();
     }
 
     public void postComment(String commentText) {
